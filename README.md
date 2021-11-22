@@ -1,6 +1,6 @@
 # fx_hash_utils
 
-Some Python scripts that might be useful for [fx(hash)](https://fxhash.xyz/) users.
+Some Python scripts that [fx(hash)](https://fxhash.xyz/) users might find useful.
 
 ## get_images
 
