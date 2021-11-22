@@ -4,6 +4,8 @@ Some Python scripts that might be useful for [fx(hash)](https://fxhash.xyz/) use
 
 ## get_images
 
+This scripts downloads the static images of the tokens generated from a given generative token <GT_id> into the folder <folder>.
+
 Usage:
 ```
 python3 get_images.py --id <GT_id> --folder <folder>
@@ -11,10 +13,10 @@ python3 get_images.py --id <GT_id> --folder <folder>
 
 ## pin_tokens
 
-This script allows you to pin all tokens generated from a generative token to Pinata.
+This script allows you to pin all tokens generated from a given generative token <GT_id> to Pinata.
 See https://nftbiker.xyz/pin for instructions on how to generate an api key.
 
-Usage
+Usage:
 ```
 python3 pin_tokens.py --id <GT_id> --api_key <api_key> --api_secret <api_secret>
 ```
