@@ -28,5 +28,5 @@ See https://nftbiker.xyz/pin for instructions on how to generate an api key.
 
 Usage:
 ```
-python3 pin_tokens.py --wallet <wallet> --api_key <api_key> --api_secret <api_secret>
+python3 pin_collection.py --wallet <wallet> --api_key <api_key> --api_secret <api_secret>
 ```
