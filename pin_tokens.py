@@ -14,7 +14,7 @@ def main(argv):
     for opt, arg in opts:
         if opt in ['-i', '--id']:
             GT_id = arg
-        elif opt in ['-a', '--api_key']:
+        elif opt in ['-k', '--api_key']:
             api_key = arg
         elif opt in ['-s', '--api_secret']:
             api_secret = arg
