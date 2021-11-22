@@ -35,7 +35,7 @@ def main(argv):
         print("Request succesful")
         binary = r.content
         output = json.loads(binary)
-        output = output['data']['generativeTokensByIds'][0]['objkts'][0:5]
+        output = output['data']['generativeTokensByIds'][0]['objkts']
 
         for objkt in output:
             objkt_name = objkt['metadata']['name']
