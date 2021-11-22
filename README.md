@@ -20,3 +20,13 @@ Usage:
 ```
 python3 pin_tokens.py --id <GT_id> --api_key <api_key> --api_secret <api_secret>
 ```
+
+## pin_collection
+
+This script allows you to pin all the tokens in your fx(hash) collection to Pinata.
+See https://nftbiker.xyz/pin for instructions on how to generate an api key.
+
+Usage:
+```
+python3 pin_tokens.py --wallet <wallet> --api_key <api_key> --api_secret <api_secret>
+```
