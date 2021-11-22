@@ -30,7 +30,10 @@ def main(argv):
 
     query = """{
         generativeTokensByIds(ids: """ + GT_id + """){
+        name
+        metadataUri
         objkts {
+              metadataUri
               metadata
               }
         }
@@ -42,12 +45,42 @@ def main(argv):
         print("Request succesful")
         binary = r.content
         output = json.loads(binary)
-        output = output['data']['generativeTokensByIds'][0]['objkts']
+        output = output['data']['generativeTokensByIds'][0]
+
+        # Generative Token Metadata
+        GT_name = output['name']
+        print("Pinning generative token " + GT_name + "...")
+        ipfs_hash = output['metadataUri'][7:]
+        body = {
+            'pinataMetadata' : {
+                'name' : GT_name + " Metadata",
+            },
+            'hashToPin' : ipfs_hash
+        }
+        r = requests.post(url_pin, data=json.dumps(body), headers=headers)
+        if r.status_code == 200:
+            print("Generative token metadata pinned")
+
+        # Objkts
+        output = output['objkts']
 
         for objkt in output:
 
             token_name = objkt['metadata']['name']
             print('Pinning ' + token_name + "...")
+
+            # Metadata
+            ipfs_hash = objkt['metadataUri'][7:]
+            body = {
+                'pinataMetadata' : {
+                    'name' : token_name + " Metadata",
+                },
+                'hashToPin' : ipfs_hash
+            }
+            r = requests.post(url_pin, data=json.dumps(body), headers=headers)
+            if r.status_code == 200:
+                print("Metadata pinned")
+
 
             # Main
             ipfs_hash = objkt['metadata']['artifactUri'][7:]
