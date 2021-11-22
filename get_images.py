@@ -1,44 +1,61 @@
-import json, requests, shutil, os
+import json, requests, shutil, os, sys, getopt
 
-GT_id = "13"                   #   id of the generative token
-folder = "sticky_circles"      #   folder to save files in
+def main(argv):
+    GT_id = ''
+    folder = ''
 
-if not os.path.exists(folder):
-    os.mkdir(folder)
+    try:
+        opts, args = getopt.getopt(argv, "i:f:",["id=",
+                                    "folder="])
 
-url = "https://api.fxhash.xyz/graphql/"
-query = """{
-    generativeTokensByIds(ids: """ + GT_id + """){
-    objkts {
-          metadata
-          }
-    }
-}"""
-r = requests.post(url, json={'query': query})
+    except:
+        print("Error in arguments: get_images.py --id <GT_id> --folder <folder>")
 
-if r.status_code == 200:
-    print("Request succesful")
-    binary = r.content
-    output = json.loads(binary)
-    output = output['data']['generativeTokensByIds'][0]['objkts']
+    for opt, arg in opts:
+        if opt in ['-i', '--id']:
+            GT_id = arg
+        elif opt in ['-f', '--folder']:
+            folder = arg
 
-    for objkt in output:
-        objkt_name = objkt['metadata']['name']
-        ipfs_url = objkt['metadata']['displayUri']
-        image_url = "https://gateway.fxhash.xyz/ipfs/" + ipfs_url[7:]
-        filename = folder + '/' + objkt_name + '.png'
+    if not os.path.exists(folder):
+        os.mkdir(folder)
 
-        r_img = requests.get(image_url, stream = True)
-        if r_img.status_code == 200:
-            r_img.raw.decode_content = True
+    url = "https://api.fxhash.xyz/graphql/"
+    query = """{
+        generativeTokensByIds(ids: """ + GT_id + """){
+        objkts {
+              metadata
+              }
+        }
+    }"""
 
-            with open(filename,'wb') as f:
-                shutil.copyfileobj(r_img.raw, f)
+    r = requests.post(url, json={'query': query})
 
-            print(objkt_name + " downloaded")
+    if r.status_code == 200:
+        print("Request succesful")
+        binary = r.content
+        output = json.loads(binary)
+        output = output['data']['generativeTokensByIds'][0]['objkts'][0:5]
 
-        else:
-            print("Error downloading " + objkt_name )
+        for objkt in output:
+            objkt_name = objkt['metadata']['name']
+            ipfs_url = objkt['metadata']['displayUri']
+            image_url = "https://gateway.fxhash.xyz/ipfs/" + ipfs_url[7:]
+            filename = folder + '/' + objkt_name + '.png'
 
-else:
-    print("Error " + r.status_code)
+            r_img = requests.get(image_url, stream = True)
+            if r_img.status_code == 200:
+                r_img.raw.decode_content = True
+
+                with open(filename,'wb') as f:
+                    shutil.copyfileobj(r_img.raw, f)
+
+                print(objkt_name + " downloaded")
+
+            else:
+                print("Error downloading " + objkt_name )
+
+    else:
+        print("Error " + str(r.status_code))
+
+main(sys.argv[1:])
