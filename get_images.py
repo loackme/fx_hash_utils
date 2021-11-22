@@ -8,7 +8,7 @@ if not os.path.exists(folder):
 
 url = "https://api.fxhash.xyz/graphql/"
 query = """{
-    generativeTokensByIds(ids: 13){
+    generativeTokensByIds(ids: """ + GT_id + """){
     objkts {
           metadata
           }
