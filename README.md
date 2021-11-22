@@ -16,5 +16,5 @@ See https://nftbiker.xyz/pin for instructions on how to generate an api key.
 
 Usage
 ```
-python3pin_tokens.py --id <GT_token> --api_key <api_key> --api_secret <api_secret>
+python3pin_tokens.py --id <GT_id> --api_key <api_key> --api_secret <api_secret>
 ```
