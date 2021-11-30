@@ -85,8 +85,7 @@ def main(argv):
         print("\n")
 
         # Pinning the objkts generated from the generative token
-        output = output['objkts']
-        for objkt in output:
+        for objkt in output['objkts']:
             pinToken(objkt)
             print("\n")
 
