@@ -5,8 +5,7 @@ def main(argv):
     folder = ''
 
     try:
-        opts, args = getopt.getopt(argv, "i:f:",["id=",
-                                    "folder="])
+        opts, args = getopt.getopt(argv, "i:f:",["id=","folder="])
 
     except:
         print("Error in arguments: get_images.py --id <GT_id> --folder <folder>")
@@ -21,13 +20,13 @@ def main(argv):
         os.mkdir(folder)
 
     url = "https://api.fxhash.xyz/graphql/"
-    query = """{
-        generativeTokensByIds(ids: """ + GT_id + """){
-        objkts {
+    query = f"""{{
+        generativeTokensByIds(ids: {GT_id}){{
+        objkts {{
               metadata
-              }
-        }
-    }"""
+              }}
+        }}
+    }}"""
 
     r = requests.post(url, json={'query': query})
 
@@ -39,9 +38,8 @@ def main(argv):
 
         for objkt in output:
             objkt_name = objkt['metadata']['name']
-            ipfs_url = objkt['metadata']['displayUri']
-            image_url = "https://gateway.fxhash.xyz/ipfs/" + ipfs_url[7:]
-            filename = folder + '/' + objkt_name + '.png'
+            image_url = f"https://gateway.fxhash.xyz/ipfs/{objkt['metadata']['displayUri'][7:]}"
+            filename = f'{folder}/{objkt_name}.png'
 
             r_img = requests.get(image_url, stream = True)
             if r_img.status_code == 200:
@@ -50,12 +48,12 @@ def main(argv):
                 with open(filename,'wb') as f:
                     shutil.copyfileobj(r_img.raw, f)
 
-                print(objkt_name + " downloaded")
+                print(f'{objkt_name} downloaded')
 
             else:
-                print("Error downloading " + objkt_name )
+                print(f'Error downloading {objkt_name}')
 
     else:
-        print("Error " + str(r.status_code))
+        print(f'Error {str(r.status_code)}')
 
 main(sys.argv[1:])
