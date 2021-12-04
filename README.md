@@ -2,6 +2,14 @@
 
 Some Python scripts that [fx(hash)](https://fxhash.xyz/) users might find useful.
 
+## dependencies
+
+Install the python dependencies.
+
+```
+python3 -m pip install -r requirements.txt
+```
+
 ## get_images
 
 This script downloads all the static images of the tokens generated from a generative token into a local folder.
