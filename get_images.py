@@ -11,7 +11,7 @@ def do_request(id, take, skip):
     }}"""
 
     return requests.post(url, json={'query': query})
-    
+
 
 def main(argv):
     GT_id = ''
@@ -44,7 +44,6 @@ def main(argv):
         if r.status_code == 200:
             binary = r.content
             output = json.loads(binary)
-
             output = output['data']['generativeTokensByIds'][0]['objkts']
 
             for objkt in output:

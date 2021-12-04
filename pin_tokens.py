@@ -1,5 +1,22 @@
 import json, requests, sys, getopt
 
+def do_fxhash_request(id, take, skip):
+    url = "https://api.fxhash.xyz/graphql/"
+    query = f"""{{
+        generativeTokensByIds(ids: {id}){{
+        name
+        metadataUri
+        metadata
+        objkts(take: {take}, skip: {skip}) {{
+              name
+              metadataUri
+              metadata
+              }}
+        }}
+    }}"""
+
+    return requests.post(url, json={'query': query})
+
 def main(argv):
     GT_id = ''
     api_key = ''
@@ -19,77 +36,70 @@ def main(argv):
         elif opt in ['-s', '--api_secret']:
             api_secret = arg
 
-    url = "https://api.fxhash.xyz/graphql/"
-    url_pin = "https://api.pinata.cloud/pinning/pinByHash"
+    def pinataRequest(ipfs_hash,name,type_data):
+        url_pin = "https://api.pinata.cloud/pinning/pinByHash"
+        headers = {
+            'content-type': 'application/json',
+            'pinata_api_key': api_key,
+            'pinata_secret_api_key': api_secret
+        }
+        body = {
+            'pinataMetadata' : {
+                'name' : f'{name} {type_data}',
+            },
+            'hashToPin' : ipfs_hash
+        }
+        r = requests.post(url_pin, data=json.dumps(body), headers=headers)
+        if r.status_code == 200:
+            print(f'{type_data} pinned')
 
-    headers = {
-        'content-type': 'application/json',
-        'pinata_api_key': api_key,
-        'pinata_secret_api_key': api_secret
-    }
+    def pinToken(objkt):
+        name = objkt['name']
+        print(f'Pinning {name}...')
 
-    query = f"""{{
-        generativeTokensByIds(ids: {GT_id}){{
-        name
-        metadataUri
-        metadata
-        objkts {{
-              name
-              metadataUri
-              metadata
-              }}
-        }}
-    }}"""
+        #Metadata
+        ipfs_hash = objkt['metadataUri'][7:]
+        pinataRequest(ipfs_hash,name,"Metadata")
 
-    r = requests.post(url, json={'query': query})
+        # Main
+        ipfs_hash = objkt['metadata']['artifactUri'][7:]
+        pinataRequest(ipfs_hash,name,"Artifact")
 
-    if r.status_code == 200:
-        print("Request succesful\n")
-        binary = r.content
-        output = json.loads(binary)
-        output = output['data']['generativeTokensByIds'][0]
+        # Display
+        ipfs_hash = objkt['metadata']['displayUri'][7:]
+        pinataRequest(ipfs_hash,name,"Display")
 
-        def pinataRequest(ipfs_hash,name,type_data):
-            body = {
-                'pinataMetadata' : {
-                    'name' : f'{name} {type_data}',
-                },
-                'hashToPin' : ipfs_hash
-            }
-            r = requests.post(url_pin, data=json.dumps(body), headers=headers)
-            if r.status_code == 200:
-                print(f'{type_data} pinned')
+        # Thumbnail
+        ipfs_hash = objkt['metadata']['thumbnailUri'][7:]
+        pinataRequest(ipfs_hash,name,"Thumbnail")
 
-        def pinToken(objkt):
-            name = objkt['name']
-            print(f'Pinning {name}...')
+    valid_request = True
+    token_count = 0
+    take_count = 20
 
-            #Metadata
-            ipfs_hash = objkt['metadataUri'][7:]
-            pinataRequest(ipfs_hash,name,"Metadata")
+    while valid_request:
+        # Do multiple requests to get all tokens, like a pagination.
+        r = do_fxhash_request(GT_id, take_count, token_count)
+        token_count += take_count
 
-            # Main
-            ipfs_hash = objkt['metadata']['artifactUri'][7:]
-            pinataRequest(ipfs_hash,name,"Artifact")
+        if r.status_code == 200:
+            binary = r.content
+            output = json.loads(binary)
+            output = output['data']['generativeTokensByIds'][0]
 
-            # Display
-            ipfs_hash = objkt['metadata']['displayUri'][7:]
-            pinataRequest(ipfs_hash,name,"Display")
+            # Pinning the objkts generated from the generative token
+            for objkt in output['objkts']:
+                pinToken(objkt)
+                print("\n")
 
-            # Thumbnail
-            ipfs_hash = objkt['metadata']['thumbnailUri'][7:]
-            pinataRequest(ipfs_hash,name,"Thumbnail")
+            if len(output['objkts']) < take_count:
+                # Pinning the generative token metadata & example
+                pinToken(output)
+                print("\n")
+                break
 
-        # Pinning the generative token metadata & example
-        pinToken(output)
-        print("\n")
-
-        # Pinning the objkts generated from the generative token
-        for objkt in output['objkts']:
-            pinToken(objkt)
-            print("\n")
-
-    else:
-        print(f'Error {str(r.status_code)}')
+        else:
+            print(f'Error {str(r.status_code)}')
+            valid_request = False
 
 main(sys.argv[1:])
