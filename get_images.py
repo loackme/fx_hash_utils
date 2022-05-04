@@ -3,7 +3,7 @@ import json, requests, shutil, os, sys, getopt
 def do_request(id, take, skip):
     url = "https://api.fxhash.xyz/graphql/"
     query = f"""{{
-        generativeTokensByIds(ids: {id}){{
+        generativeToken(id: {id}){{
         objkts(take: {take}, skip: {skip}) {{
               metadata
               }}
@@ -44,7 +44,7 @@ def main(argv):
         if r.status_code == 200:
             binary = r.content
             output = json.loads(binary)
-            output = output['data']['generativeTokensByIds'][0]['objkts']
+            output = output['data']['generativeToken']['objkts']
 
             for objkt in output:
                 objkt_name = objkt['metadata']['name']
