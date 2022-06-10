@@ -29,6 +29,15 @@ Usage:
 python3 pin_tokens.py --id <GT_id> --api_key <api_key> --api_secret <api_secret>
 ```
 
+## pin_tokens_infura
+
+This script allows you to pin all tokens generated from a given generative token on Infura. Once you have created an account on https://infura.io/, create a new IPFS project. In the project settings, look for 'PROJECT ID' and 'PROJECT SECRET'. That's what you need to use the API.
+
+Usage:
+```
+python3 pin_tokens.py --id <GT_id> --api_key <PROJECT_ID> --api_secret <PROJECT_SECRET>
+```
+
 ## pin_collection
 
 This script allows you to pin all the tokens in your fx(hash) collection to Pinata.
