@@ -35,7 +35,7 @@ This script allows you to pin all tokens generated from a given generative token
 
 Usage:
 ```
-python3 pin_tokens.py --id <GT_id> --api_id <PROJECT_ID> --api_secret <PROJECT_SECRET>
+python3 pin_tokens_infura.py --id <GT_id> --api_id <PROJECT_ID> --api_secret <PROJECT_SECRET>
 ```
 
 ## pin_collection
