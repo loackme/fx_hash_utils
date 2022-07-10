@@ -1,4 +1,4 @@
-import json, requests, sys
+import json, requests, sys, subprocess
 
 class IPFSPinner:
     """Pins hashes to a specific service, like Infura, Pinata, or your own locally-running IPFS node."""
@@ -28,6 +28,14 @@ class IPFSPinner:
         ipfs_hash = objkt['metadataUri'][7:]
         self.pin(ipfs_hash,name,"Metadata")
 
+        # Display
+        ipfs_hash = objkt['metadata']['displayUri'][7:]
+        self.pin(ipfs_hash,name,"Display")
+
+        # Thumbnail
+        ipfs_hash = objkt['metadata']['thumbnailUri'][7:]
+        self.pin(ipfs_hash,name,"Thumbnail")
+
         # Main
         if 'generatorUri' in objkt['metadata']:
             ipfs_hash = objkt['metadata']['generatorUri'][7:]
@@ -38,20 +46,12 @@ class IPFSPinner:
             ipfs_hash = objkt['metadata']['artifactUri'][7:]
         self.pin(ipfs_hash,name,"Generator")
 
-        # Display
-        ipfs_hash = objkt['metadata']['displayUri'][7:]
-        self.pin(ipfs_hash,name,"Display")
-
-        # Thumbnail
-        ipfs_hash = objkt['metadata']['thumbnailUri'][7:]
-        self.pin(ipfs_hash,name,"Thumbnail")
-
 
     def pin(self, ipfs_hash, name, type_data):
         if self.ipfs_service_type == 'pinata':
             self.pinataRequest(ipfs_hash, name, type_data)
         elif self.ipfs_service_type == 'ipfs':
-            self.pinataRequest(ipfs_hash, name, type_data)
+            self.pinIpfsLocalNode(ipfs_hash, name, type_data)
         elif self.ipfs_service_type == 'infura':
             raise Exception('Infura not implemented yet.')
         else: 
@@ -75,3 +75,10 @@ class IPFSPinner:
             print(f'{type_data} pinned')
         else:
             print(f'Error pinning {type_data}: {r.status_code}')
+
+    def pinIpfsLocalNode(self, ipfs_hash, name, type_data):
+        result = subprocess.call(["ipfs", "pin", "add", ipfs_hash])
+        if result == 0:
+            print(f'{type_data} pinned')
+        else: 
+            print(f'Error pinning IPFS hash. Error code {result}')
