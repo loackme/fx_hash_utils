@@ -22,14 +22,21 @@ class IPFSPinner:
     def pinToken(self, objkt):
         name = objkt['name']
         print(f'Pinning {name}...')
+        #print(objkt)
 
         #Metadata
         ipfs_hash = objkt['metadataUri'][7:]
         self.pin(ipfs_hash,name,"Metadata")
 
         # Main
-        ipfs_hash = objkt['metadata']['artifactUri'][7:]
-        self.pin(ipfs_hash,name,"Artifact")
+        if 'generatorUri' in objkt['metadata']:
+            ipfs_hash = objkt['metadata']['generatorUri'][7:]
+        elif 'generativeUri' in objkt['metadata']:
+            ipfs_hash = objkt['metadata']['generativeUri'][7:]
+        else:
+            # note: this doesn't actually work because it includes the fxhash query param.
+            ipfs_hash = objkt['metadata']['artifactUri'][7:]
+        self.pin(ipfs_hash,name,"Generator")
 
         # Display
         ipfs_hash = objkt['metadata']['displayUri'][7:]
@@ -66,3 +73,5 @@ class IPFSPinner:
         r = requests.post(url_pin, data=json.dumps(body), headers=headers)
         if r.status_code == 200:
             print(f'{type_data} pinned')
+        else:
+            print(f'Error pinning {type_data}: {r.status_code}')
