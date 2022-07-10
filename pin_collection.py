@@ -1,4 +1,5 @@
 import json, requests, sys, getopt
+from ipfs_utils import IPFSPinner
 
 def do_fxhash_request(wallet, take, skip):
     url = "https://api.fxhash.xyz/graphql/"
@@ -9,12 +10,13 @@ def main(argv):
     wallet = ''
     api_key = ''
     api_secret = ''
+    service_type = 'pinata'
 
     try:
-        opts, args = getopt.getopt(argv, "w:k:s:",["wallet=","api_key=","api_secret="])
+        opts, args = getopt.getopt(argv, "w:k:s:t:",["wallet=","api_key=","api_secret=","service_type"])
 
     except:
-        print("Error in arguments: pin_collection.py --wallet <wallet> --api_key <api_key> --api_secret <api_secret>")
+        print("Error in arguments: pin_collection.py --wallet <wallet> --api_key <api_key> --api_secret <api_secret> --service_type [pinata|ipfs|infura]")
 
     for opt, arg in opts:
         if opt in ['-w', '--wallet']:
@@ -23,43 +25,12 @@ def main(argv):
             api_key = arg
         elif opt in ['-s', '--api_secret']:
             api_secret = arg
+        elif opt in ['-t', '--service_type']:
+            service_type = arg
 
-    def pinataRequest(ipfs_hash,name,type_data):
-        url_pin = "https://api.pinata.cloud/pinning/pinByHash"
-        headers = {
-            'content-type': 'application/json',
-            'pinata_api_key': api_key,
-            'pinata_secret_api_key': api_secret
-        }
-        body = {
-            'pinataMetadata' : {
-                'name' : f'{name} {type_data}',
-            },
-            'hashToPin' : ipfs_hash
-        }
-        r = requests.post(url_pin, data=json.dumps(body), headers=headers)
-        if r.status_code == 200:
-            print(f'{type_data} pinned')
+    pinner = IPFSPinner(service_type, api_key, api_secret)
 
-    def pinToken(objkt):
-        name = objkt['name']
-        print(f'Pinning {name}...')
 
-        #Metadata
-        ipfs_hash = objkt['metadataUri'][7:]
-        pinataRequest(ipfs_hash,name,"Metadata")
-
-        # Main
-        ipfs_hash = objkt['metadata']['artifactUri'][7:]
-        pinataRequest(ipfs_hash,name,"Artifact")
-
-        # Display
-        ipfs_hash = objkt['metadata']['displayUri'][7:]
-        pinataRequest(ipfs_hash,name,"Display")
-
-        # Thumbnail
-        ipfs_hash = objkt['metadata']['thumbnailUri'][7:]
-        pinataRequest(ipfs_hash,name,"Thumbnail")
 
     valid_request = True
     token_count = 0
@@ -76,7 +47,7 @@ def main(argv):
             output = output['data']['user']['objkts']
 
             for objkt in output:
-                pinToken(objkt)
+                pinner.pinToken(objkt)
                 print("\n")
 
             if len(output) < take_count:
