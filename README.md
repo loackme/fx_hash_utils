@@ -47,3 +47,13 @@ Usage:
 ```
 python3 pin_collection.py --wallet <wallet> --api_key <api_key> --api_secret <api_secret>
 ```
+
+## pin_creations
+
+This script allows you to pin all the tokens you have created as an artist on fx(hash) to Pinata.
+See https://nftbiker.xyz/pin for instructions on how to generate an api key.
+
+Usage:
+```
+python3 pin_creations.py --wallet <wallet> --api_key <api_key> --api_secret <api_secret>
+```
