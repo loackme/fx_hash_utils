@@ -57,3 +57,11 @@ Usage:
 ```
 python3 pin_creations.py --wallet <wallet> --api_key <api_key> --api_secret <api_secret>
 ```
+
+# Pinning to your local IPFS node
+
+You can also use these scripts to pin to your own locally-running IPFS node with the `ipfs` command line.
+
+Use any of the script commands above, but add ` --service_type ipfs` to the end of the command.
+
+Note that pinning the generator (last step) can take a very long time, depending on your node and the size of the artwork.
