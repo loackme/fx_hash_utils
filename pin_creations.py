@@ -13,7 +13,7 @@ def main(argv):
     service_type = 'pinata'
 
     try:
-        opts, args = getopt.getopt(argv, "w:k:s:t:",["wallet=","api_key=","api_secret=","service_type"])
+        opts, args = getopt.getopt(argv, "w:k:s:t:",["wallet=","api_key=","api_secret=","service_type="])
 
     except:
         print("Error in arguments: pin_creations.py --wallet <wallet> --api_key <api_key> --api_secret <api_secret> --service_type [pinata|ipfs|infura]")

@@ -13,7 +13,7 @@ class IPFSPinner:
         api_key : str
             the API key for the service (not needed for "ipfs")
         api_secret : str
-            the API secrete for the service (not needed for "ipfs")        
+            the API secrete for the service (not needed for "ipfs")
         """
         self.api_key = api_key
         self.api_secret = api_secret
@@ -54,9 +54,9 @@ class IPFSPinner:
             self.pinIpfsLocalNode(ipfs_hash, name, type_data)
         elif self.ipfs_service_type == 'infura':
             raise Exception('Infura not implemented yet.')
-        else: 
+        else:
             raise Exception('Unknown IPFS service type')
-        
+
     def pinataRequest(self, ipfs_hash,name,type_data):
         url_pin = "https://api.pinata.cloud/pinning/pinByHash"
         headers = {
@@ -80,5 +80,5 @@ class IPFSPinner:
         result = subprocess.call(["ipfs", "pin", "add", ipfs_hash])
         if result == 0:
             print(f'{type_data} pinned')
-        else: 
+        else:
             print(f'Error pinning IPFS hash. Error code {result}')
