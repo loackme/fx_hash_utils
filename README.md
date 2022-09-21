@@ -19,9 +19,7 @@ Usage:
 python3 get_images.py --id <GT_id> --folder <folder>
 ```
 
-## Pinning
-
- using different services
+## Pinning tokens
 
 These scripts allow you to pin tokens using different services.
 
@@ -31,14 +29,14 @@ These scripts allow you to pin tokens using different services.
 
 ### pin_tokens
 
-These script allows you to pin all tokens generated from a given generative token
+This script allows you to pin all tokens generated from a given generative token.
 
 Usage:
 ```
 python3 pin_tokens.py --id <GT_id> --api_key <api_key> --api_secret <api_secret> --service_type [pinata|infura|ipfs]
 ```
 
-## pin_collection
+### pin_collection
 
 This script allows you to pin all the tokens in your fx(hash) collection.
 
@@ -47,7 +45,7 @@ Usage:
 python3 pin_collection.py --wallet <wallet> --api_key <api_key> --api_secret <api_secret> --service_type [pinata|infura|ipfs]
 ```
 
-## pin_creations
+### pin_creations
 
 This script allows you to pin all the tokens you have created as an artist on fx(hash).
 
