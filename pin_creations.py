@@ -10,7 +10,7 @@ def main(argv):
     wallet = ''
     api_key = ''
     api_secret = ''
-    service_type = 'pinata'
+    service_type = 'infura'
 
     try:
         opts, args = getopt.getopt(argv, "w:k:s:t:",["wallet=","api_key=","api_secret=","service_type="])

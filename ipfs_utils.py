@@ -42,8 +42,7 @@ class IPFSPinner:
         elif 'generativeUri' in objkt['metadata']:
             ipfs_hash = objkt['metadata']['generativeUri'][7:]
         else:
-            # note: this doesn't actually work because it includes the fxhash query param.
-            ipfs_hash = objkt['metadata']['artifactUri'][7:]
+            ipfs_hash = objkt['metadata']['artifactUri'][7:].split('?')[0]
         self.pin(ipfs_hash,name,"Generator")
 
 
@@ -53,11 +52,11 @@ class IPFSPinner:
         elif self.ipfs_service_type == 'ipfs':
             self.pinIpfsLocalNode(ipfs_hash, name, type_data)
         elif self.ipfs_service_type == 'infura':
-            raise Exception('Infura not implemented yet.')
+            self.infuraRequest(ipfs_hash, name, type_data)
         else:
             raise Exception('Unknown IPFS service type')
 
-    def pinataRequest(self, ipfs_hash,name,type_data):
+    def pinataRequest(self, ipfs_hash,name, type_data):
         url_pin = "https://api.pinata.cloud/pinning/pinByHash"
         headers = {
             'content-type': 'application/json',
@@ -82,3 +81,12 @@ class IPFSPinner:
             print(f'{type_data} pinned')
         else:
             print(f'Error pinning IPFS hash. Error code {result}')
+
+    def infuraRequest(self, ipfs_hash, name, type_data):
+        url_pin = "https://ipfs.infura.io:5001/api/v0/pin/add"
+        params = {'arg': ipfs_hash}
+        r = requests.post(url_pin, params=params, auth=(self.api_key, self.api_secret))
+        if r.status_code == 200:
+            print(f'{type_data} pinned')
+        else:
+            print(f'Error pinning {type_data}: {r.status_code}')

@@ -4,7 +4,7 @@ from ipfs_utils import IPFSPinner
 def do_fxhash_request(id, take, skip):
     url = "https://api.fxhash.xyz/graphql/"
     query = f"""{{
-        generativeTokensByIds(ids: {id}){{
+        generativeToken(id: {id}){{
         name
         metadataUri
         metadata
@@ -22,7 +22,7 @@ def main(argv):
     GT_id = ''
     api_key = ''
     api_secret = ''
-    service_type = 'pinata'
+    service_type = 'infura'
 
     try:
         opts, args = getopt.getopt(argv, "i:k:s:t:",["id=","api_key=","api_secret=","service_type="])
@@ -54,7 +54,7 @@ def main(argv):
         if r.status_code == 200:
             binary = r.content
             output = json.loads(binary)
-            output = output['data']['generativeTokensByIds'][0]
+            output = output['data']['generativeToken']
 
             # Pinning the objkts generated from the generative token
             for objkt in output['objkts']:
